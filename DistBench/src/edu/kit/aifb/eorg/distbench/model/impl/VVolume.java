@@ -17,19 +17,13 @@ public class VVolume extends Entity implements SingleNetworkedEntity, ZonedEntit
 		storageSize = 0;
 	}
 	
-	int getStorageSize() {
+	public int getStorageSize() {
 		return storageSize;
 	}
-	void setStorageSize(int storageSize) {
+	public void setStorageSize(int storageSize) {
 		this.storageSize = storageSize;
 	}
 	
-	public AvailabilityZone getAvailabilityZone() {
-		return zone;
-	}
-	public void setAvailabilityZone(AvailabilityZone zone) {
-		this.zone = zone;
-	}
 	@Override
 	public VLink getVLink(UUID id) {
 		if( vLink.getId().equals(id) ) {

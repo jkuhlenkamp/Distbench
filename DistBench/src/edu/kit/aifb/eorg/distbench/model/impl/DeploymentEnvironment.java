@@ -12,7 +12,7 @@ public class DeploymentEnvironment extends Entity {
 		datercenters = new HashMap<>();
 	}
 	
-	Datacenter getDataCenter(UUID id) {
+	public Datacenter getDataCenter(UUID id) {
 		if( datercenters.containsKey(id) ) {
 			return datercenters.get(id);
 		}
@@ -21,7 +21,8 @@ public class DeploymentEnvironment extends Entity {
 						"does not contain a Datacenter with id: " +id);
 		}
 	}
-	void addDataCenter(Datacenter dc) {
+	
+	public void addDataCenter(Datacenter dc) {
 		if(datercenters.containsKey(dc.getId())) {
 			if( !dc.equals(datercenters.get(dc.getId())) ) {
 				throw new IllegalArgumentException("This datatercenter" +
@@ -33,7 +34,7 @@ public class DeploymentEnvironment extends Entity {
 		}
 	}
 	
-	void removeDataCenter(UUID id) {
+	public void removeDataCenter(UUID id) {
 		if( datercenters.containsKey(id) ) {
 			datercenters.remove(id);
 		}

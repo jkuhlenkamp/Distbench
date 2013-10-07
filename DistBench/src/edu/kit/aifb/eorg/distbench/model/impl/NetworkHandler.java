@@ -17,9 +17,14 @@ public class NetworkHandler {
 	}
 	
 	public VLink createVLink(VMachine end1, VMachine end2) {
-		VLink vLink = new VNetworkLink(end1, end2);
-		addVlinkToEnds(end1, end2, vLink);
-		return vLink;
+		if( !end1.getId().equals(end2.getId()) ) {
+			VLink vLink = new VNetworkLink(end1, end2);
+			addVlinkToEnds(end1, end2, vLink);
+			return vLink;
+		}
+		else {
+			throw new IllegalArgumentException();
+		}
 	}
 	
 	public VLink createVLink(VMachine end1, VVolume end2) {
