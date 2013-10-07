@@ -4,12 +4,12 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.profitbricks.api.ws.ConnectStorageRequest;
 import com.profitbricks.api.ws.CreateDcResponse;
 import com.profitbricks.api.ws.CreateNicRequest;
 import com.profitbricks.api.ws.CreateNicResponse;
 import com.profitbricks.api.ws.CreateServerRequest;
 import com.profitbricks.api.ws.CreateStorageRequest;
-import com.profitbricks.api.ws.CreateStorageResponse;
 import com.profitbricks.api.ws.DataCenter;
 import com.profitbricks.api.ws.DataCenterIdentifier;
 import com.profitbricks.api.ws.Image;
@@ -20,12 +20,13 @@ import com.profitbricks.api.ws.ProfitbricksServiceFault;
 import com.profitbricks.api.ws.Region;
 import com.profitbricks.api.ws.Server;
 import com.profitbricks.api.ws.Storage;
+import com.profitbricks.api.ws.VersionResponse;
 
 public class ProfitBricksApi {
 	
 	private ProfitbricksApiServicePortBindingStub stub;
 	
-	private static final String UBUNTU_13_04_SERVER_AMD64_05_28_13_IMG = "ubuntu-13.04-server-amd64-05.28.13.img";
+	private static final String UBUNTU_13_04_SERVER_AMD64_05_28_13_IMG = "3e90d37c-c87a-11e2-b188-0025901dfe2a";
 	
 	public ProfitBricksApi(ProfitbricksApiServicePortBindingStub stub) {
 		this.stub = stub;
@@ -51,7 +52,7 @@ public class ProfitBricksApi {
 		request.setStorageName(storageName);
 		request.setSize(size);
 		request.setMountImageId(UBUNTU_13_04_SERVER_AMD64_05_28_13_IMG);
-		request.setProfitBricksImagePassword("distbench");
+		request.setProfitBricksImagePassword("djstbench");
 		return stub.getStorage(stub.createStorage(request).getStorageId());
 	}
 	
@@ -85,4 +86,11 @@ public class ProfitBricksApi {
 		return datacenterMap;
 	}
 
+	public VersionResponse connectStorageToServer(String storageId, String serverId) throws ProfitbricksServiceFault, RemoteException {
+		ConnectStorageRequest request = new ConnectStorageRequest();
+		request.setServerId(serverId);
+		request.setStorageId(storageId);
+		return stub.connectStorageToServer(request);
+	}
+	
 }
