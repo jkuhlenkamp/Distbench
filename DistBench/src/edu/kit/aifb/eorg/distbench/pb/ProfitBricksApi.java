@@ -3,6 +3,7 @@ package edu.kit.aifb.eorg.distbench.pb;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import com.profitbricks.api.ws.ConnectStorageRequest;
 import com.profitbricks.api.ws.CreateDcResponse;
@@ -22,7 +23,13 @@ import com.profitbricks.api.ws.Server;
 import com.profitbricks.api.ws.Storage;
 import com.profitbricks.api.ws.VersionResponse;
 
-public class ProfitBricksApi {
+import edu.kit.aifb.eorg.distbench.model.impl.Datacenter;
+import edu.kit.aifb.eorg.distbench.model.impl.VLink;
+import edu.kit.aifb.eorg.distbench.model.impl.VMachine;
+import edu.kit.aifb.eorg.distbench.model.impl.VVolume;
+import edu.kit.aifb.eorg.distbench.provisioning.P_API_Strategy;
+
+public class ProfitBricksApi implements P_API_Strategy {
 	
 	private ProfitbricksApiServicePortBindingStub stub;
 	
@@ -91,6 +98,68 @@ public class ProfitBricksApi {
 		request.setServerId(serverId);
 		request.setStorageId(storageId);
 		return stub.connectStorageToServer(request);
+	}
+	
+	public String getDatacenterIdForName(String datacenterName) {
+		Map<String, String> datacenterMap = null;
+		try {
+			datacenterMap = createDatacenterMap();
+		} catch (ProfitbricksServiceFault e) {
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		
+		Set<String> keySet = datacenterMap.keySet();
+		for (String key : keySet) {
+			String otherDatacenterName = datacenterMap.get(key);
+			if (otherDatacenterName.equals(datacenterName)) {
+				return key;
+			}
+		}
+		throw new IllegalArgumentException("The specified datacenter name is not in the list");
+	}
+
+	@Override
+	public Datacenter createDatacenter(Datacenter dc) {
+		try {
+			createDatacenter(dc.getId().toString());
+		} catch (ProfitbricksServiceFault e) {
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return dc;
+	}
+
+	@Override
+	public VMachine createVMachine(VMachine vm) {
+		try {
+			createServer(getDatacenterIdForName(vm.getDatacenter().getId().toString()), vm.getCores(), vm.getRam() * 1024);
+		} catch (ProfitbricksServiceFault e) {
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return vm;
+	}
+
+	@Override
+	public VVolume createVVolume(VVolume vv) {
+		try {
+			createStorage(getDatacenterIdForName(vv.getDatacenter().getId().toString()), vv.getId().toString(), vv.getStorageSize());
+		} catch (ProfitbricksServiceFault e) {
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return vv;
+	}
+
+	@Override
+	public VLink createVLink(VLink vl) {
+		vl.
+		return null;
 	}
 	
 }

@@ -7,9 +7,9 @@ import edu.kit.aifb.eorg.distbench.model.impl.VVolume;
 
 public interface P_API_Strategy {
 
-	Datacenter createDatacenter(Datacenter dc);
-	VMachine createVMachine(VMachine vm);
-	VVolume createVVolume(VVolume vv);
-	VLink createVLink(VLink vl);
+	public Datacenter createDatacenter(Datacenter dc);
+	public VMachine createVMachine(VMachine vm);
+	public VVolume createVVolume(VVolume vv);
+	public VLink createVLink(VLink vl);
 	
 }

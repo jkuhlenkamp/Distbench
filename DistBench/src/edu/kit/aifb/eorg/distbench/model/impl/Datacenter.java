@@ -1,6 +1,8 @@
 package edu.kit.aifb.eorg.distbench.model.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -91,6 +93,11 @@ public class Datacenter extends Entity {
 		if( vVolumes.containsKey(id) ) {
 			vVolumes.remove(id);
 		}
+	}
+	
+	public List<VMachine> getAllVMachines() {
+		List<VMachine> vMachineList = new ArrayList<>(vMachines.values());
+		return vMachineList;
 	}
 
 }

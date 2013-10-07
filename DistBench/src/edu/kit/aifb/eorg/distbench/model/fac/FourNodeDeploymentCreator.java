@@ -48,7 +48,7 @@ public class FourNodeDeploymentCreator implements DeploymentEnvironmentCreator {
 		
 		// Create servers with volumes and network links
 		for(int i = 0; i < numbServer; i++) {
-			VMachine vm = new VMachine();
+			VMachine vm = new VMachine(dc);
 			vm.setCores(1);
 			vm.setRam(1);
 			vm.setZone(zone);

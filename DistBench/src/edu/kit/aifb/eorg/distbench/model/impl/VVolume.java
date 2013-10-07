@@ -11,9 +11,15 @@ public class VVolume extends Entity implements SingleNetworkedEntity, ZonedEntit
 	private int storageSize;
 	private AvailabilityZone zone;
 	private VLink vLink;
+	private final Datacenter datacenter;
 	
-	public VVolume() {
+	public VLink getvLink() {
+		return vLink;
+	}
+
+	public VVolume(Datacenter datacenter) {
 		super();
+		this.datacenter = datacenter;
 		storageSize = 0;
 	}
 	
@@ -50,6 +56,10 @@ public class VVolume extends Entity implements SingleNetworkedEntity, ZonedEntit
 	@Override
 	public VLink getVLink() {
 		return vLink;
+	}
+
+	public Datacenter getDatacenter() {
+		return this.datacenter;
 	}
 	
 }

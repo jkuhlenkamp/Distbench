@@ -1,20 +1,22 @@
 package edu.kit.aifb.eorg.distbench.model.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public class DeploymentEnvironment extends Entity {
 
-	Map<UUID, Datacenter> datercenters;
+	Map<UUID, Datacenter> datacenters;
 	
 	public DeploymentEnvironment() {
-		datercenters = new HashMap<>();
+		datacenters = new HashMap<>();
 	}
 	
 	public Datacenter getDataCenter(UUID id) {
-		if( datercenters.containsKey(id) ) {
-			return datercenters.get(id);
+		if( datacenters.containsKey(id) ) {
+			return datacenters.get(id);
 		}
 		else {
 			throw new IllegalArgumentException("This DeploymentEnvironment " +
@@ -23,21 +25,26 @@ public class DeploymentEnvironment extends Entity {
 	}
 	
 	public void addDataCenter(Datacenter dc) {
-		if(datercenters.containsKey(dc.getId())) {
-			if( !dc.equals(datercenters.get(dc.getId())) ) {
+		if(datacenters.containsKey(dc.getId())) {
+			if( !dc.equals(datacenters.get(dc.getId())) ) {
 				throw new IllegalArgumentException("This datatercenter" +
 						"contains another datacenter object with id: " +dc.getId());
 			}
 		}
 		else {
-			datercenters.put(dc.getId(), dc);
+			datacenters.put(dc.getId(), dc);
 		}
 	}
 	
 	public void removeDataCenter(UUID id) {
-		if( datercenters.containsKey(id) ) {
-			datercenters.remove(id);
+		if( datacenters.containsKey(id) ) {
+			datacenters.remove(id);
 		}
+	}
+	
+	public List<Datacenter> getAllDatacenters() {
+		List<Datacenter> datacenterList = new ArrayList<>(datacenters.values());
+		return datacenterList;
 	}
 	
 }

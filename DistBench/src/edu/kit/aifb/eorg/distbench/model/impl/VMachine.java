@@ -16,13 +16,19 @@ public class VMachine extends Entity implements MultiNetworkedEntity, ZonedEntit
 	private OperatingSystem os;
 	private Map<UUID, VLink> vLinks;
 	private AvailabilityZone zone;
+	private final Datacenter datacenter;
 	
-	public VMachine() {
+	public Datacenter getDatacenter() {
+		return datacenter;
+	}
+
+	public VMachine(Datacenter datacenter) {
 		super();
 		cores = 0;
 		ram = 0;
 		os = OperatingSystem.UBUNTU_13_04;
 		vLinks = new HashMap<>();
+		this.datacenter = datacenter;
 	}
 	
 	public OperatingSystem getOs() {
