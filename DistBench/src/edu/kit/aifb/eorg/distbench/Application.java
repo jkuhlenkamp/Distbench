@@ -3,22 +3,23 @@ package edu.kit.aifb.eorg.distbench;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.axis.AxisFault;
 
-import com.profitbricks.api.ws.DataCenterIdentifier;
+import com.profitbricks.api.ws.DataCenter;
+import com.profitbricks.api.ws.Nic;
 import com.profitbricks.api.ws.ProfitbricksApiService;
 import com.profitbricks.api.ws.ProfitbricksApiServiceLocator;
 import com.profitbricks.api.ws.ProfitbricksApiServicePortBindingStub;
-import com.profitbricks.api.ws.ProfitbricksServiceFault;
-import com.profitbricks.api.ws.Region;
+import com.profitbricks.api.ws.Server;
+import com.profitbricks.api.ws.Storage;
+
+import edu.kit.aifb.eorg.distbench.pb.ProfitBricksApi;
 
 public class Application {
 
-	private static final String DISTBENCH_DATACENTER = "distbenchDatacenter";
-
+	private static final String HTTPS_API_PROFITBRICKS_COM_1_2 = "https://api.profitbricks.com/1.2";
+	
 	/**
 	 * @param args
 	 */
@@ -26,16 +27,18 @@ public class Application {
 
 		ProfitbricksApiService pbApiService = new ProfitbricksApiServiceLocator();
 		try {
-			ProfitbricksApiServicePortBindingStub stub = new ProfitbricksApiServicePortBindingStub(
-					new URL("https://api.profitbricks.com/1.2"), pbApiService);
+			ProfitbricksApiServicePortBindingStub stub = new ProfitbricksApiServicePortBindingStub(new URL(HTTPS_API_PROFITBRICKS_COM_1_2), pbApiService);
 			stub.setUsername("joern.kuhlenkamp@kit.edu");
 			stub.setPassword("distbench");
-
-			Map<String, String> datacenterMap = createDatacenterMap(stub);
-
-			if (!datacenterMap.containsKey(DISTBENCH_DATACENTER)) {
-				stub.createDataCenter(DISTBENCH_DATACENTER, Region.EUROPE);
-			}
+			ProfitBricksApi profitBricksApi = new ProfitBricksApi(stub);
+			DataCenter datacenter = profitBricksApi.createDatacenter("distbenchDatacenter");
+			System.out.println(datacenter.getDataCenterId() + " | " + datacenter.getDataCenterName());
+			Server server = profitBricksApi.createServer(datacenter.getDataCenterId(), 1, 512);
+			System.out.println("Server " + server.getServerId() + " in " + server.getDataCenterId());
+			Storage storage = profitBricksApi.createStorage(datacenter.getDataCenterId(), "JoernsStorage", 1);
+			System.out.println("Storage " + storage.getStorageId() + " with " + storage.getStorageName());
+			Nic nic = profitBricksApi.createNic(server.getServerId(), 1, true);
+			System.out.println("Nic " + nic.getNicId() + " | " + nic.getNicName());
 		} catch (AxisFault e) {
 			e.printStackTrace();
 		} catch (MalformedURLException e) {
@@ -44,21 +47,6 @@ public class Application {
 			e.printStackTrace();
 		}
 
-	}
-
-	private static Map<String, String> createDatacenterMap(
-			ProfitbricksApiServicePortBindingStub stub) throws RemoteException,
-			ProfitbricksServiceFault {
-		Map<String, String> datacenterMap = new HashMap<>();
-		DataCenterIdentifier[] dataCenters = stub.getAllDataCenters();
-		for (DataCenterIdentifier dataCenterIdentifier : dataCenters) {
-			String dataCenterId = dataCenterIdentifier.getDataCenterId();
-			String dataCenterName = dataCenterIdentifier.getDataCenterName();
-			datacenterMap.put(dataCenterName, dataCenterId);
-			System.out.print(dataCenterId);
-			System.out.println(" > " + dataCenterName);
-		}
-		return datacenterMap;
 	}
 
 }
