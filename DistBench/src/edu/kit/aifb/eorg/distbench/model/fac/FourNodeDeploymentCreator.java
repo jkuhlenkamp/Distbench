@@ -53,7 +53,7 @@ public class FourNodeDeploymentCreator implements DeploymentEnvironmentCreator {
 			vm.setRam(1);
 			vm.setZone(zone);
 			for(int j = 0; j < numbVolumesPerServer; j++) {
-				VVolume vv = new VVolume();
+				VVolume vv = new VVolume(dc);
 				vv.setStorageSize(10);
 				networkHandler.createVLink(vm, vv);
 			}
