@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import edu.kit.aifb.eorg.distbench.model.MultiNetworkedEntity;
+import edu.kit.aifb.eorg.distbench.model.NetworkedEntity;
 import edu.kit.aifb.eorg.distbench.model.ZonedEntity;
 import edu.kit.aifb.eorg.distbench.model.enums.AvailabilityZone;
 import edu.kit.aifb.eorg.distbench.model.enums.OperatingSystem;
@@ -80,6 +81,17 @@ public class VMachine extends Entity implements MultiNetworkedEntity, ZonedEntit
 	public List<VLink> getAllVLinks() {
 		List<VLink> vlinkList = new ArrayList<>(vLinks.values());
 		return vlinkList;
+	}
+	
+	public List<VVolume> getAllVVolumes() {
+		List<VVolume> vvolumeList = new ArrayList<>();
+		for ( VLink vlink: vLinks.values()) {
+			NetworkedEntity end2 = vlink.getEnd2();
+			if(end2 instanceof VVolume && !(vvolumeList.contains(end2)) ) {
+				vvolumeList.add((VVolume) end2);
+			}
+		}
+		return vvolumeList;
 	}
 	
 	@Override
