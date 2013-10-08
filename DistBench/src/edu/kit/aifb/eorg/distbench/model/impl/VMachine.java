@@ -1,6 +1,8 @@
 package edu.kit.aifb.eorg.distbench.model.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -74,6 +76,12 @@ public class VMachine extends Entity implements MultiNetworkedEntity, ZonedEntit
 					"registered VLink object with id: " +id);
 		}
 	}
+	
+	public List<VLink> getAllVLinks() {
+		List<VLink> vlinkList = new ArrayList<>(vLinks.values());
+		return vlinkList;
+	}
+	
 	@Override
 	public void addVLink(VLink vLink) {
 		if( !vLinks.containsKey(vLink.getId()) ) {
