@@ -6,15 +6,9 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.axis.AxisFault;
-
-import com.profitbricks.api.ws.DataCenter;
 import com.profitbricks.api.ws.ProfitbricksApiService;
 import com.profitbricks.api.ws.ProfitbricksApiServiceLocator;
 import com.profitbricks.api.ws.ProfitbricksApiServicePortBindingStub;
-import com.profitbricks.api.ws.Server;
-import com.profitbricks.api.ws.Storage;
-import com.profitbricks.api.ws.VersionResponse;
 
 import edu.kit.aifb.eorg.distbench.model.fac.DeploymentEnvironmentCreator;
 import edu.kit.aifb.eorg.distbench.model.fac.FourNodeDeploymentCreator;
@@ -28,7 +22,6 @@ import edu.kit.aifb.eorg.distbench.provisioning.ProvisioningStrategy;
 
 public class Application {
 
-	private static final String DISTBENCH_DATACENTER = "distbenchDatacenter";
 	private static final String HTTPS_API_PROFITBRICKS_COM_1_2 = "https://api.profitbricks.com/1.2";
 
 	/**
@@ -56,6 +49,9 @@ public class Application {
 				instanciateVVolumes(strategy, vMachines);
 //				instanciateVLinksForVMachines(strategy, vMachines);
 			}
+			for (Datacenter datacenter : datacenters) {
+				System.out.println(datacenter.toString());
+			}
 			// ProfitBricksApi profitBricksApi = new ProfitBricksApi(stub);
 			// DataCenter datacenter =
 			// profitBricksApi.createDatacenter(DISTBENCH_DATACENTER);
@@ -79,8 +75,6 @@ public class Application {
 			// versionResponse.getRequestId());
 			// profitBricksApi.createNic(serverJoern.getServerId(), 1, true);
 			// profitBricksApi.createNic(serverBugra.getServerId(), 1, true);
-		} catch (AxisFault e) {
-			e.printStackTrace();
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (RemoteException e) {

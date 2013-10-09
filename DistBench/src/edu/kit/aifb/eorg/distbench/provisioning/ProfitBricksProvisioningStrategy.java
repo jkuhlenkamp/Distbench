@@ -49,10 +49,6 @@ public class ProfitBricksProvisioningStrategy implements ProvisioningStrategy {
 	}
 	
 	public Storage createStorage(String dataCenterId, String storageName, long size) throws ProfitbricksServiceFault, RemoteException {
-		Image[] allImages = stub.getAllImages();
-		for (Image image : allImages) {
-			System.out.println(image.getImageId() + " | " + image.getImageName());
-		}
 		CreateStorageRequest request = new CreateStorageRequest();
 		request.setDataCenterId(dataCenterId);
 		request.setStorageName(storageName);
@@ -60,6 +56,14 @@ public class ProfitBricksProvisioningStrategy implements ProvisioningStrategy {
 		request.setMountImageId(UBUNTU_13_04_SERVER_AMD64_05_28_13_IMG);
 		request.setProfitBricksImagePassword("djstbench");
 		return stub.getStorage(stub.createStorage(request).getStorageId());
+	}
+
+	public void printAllProfitBricksImages() throws RemoteException,
+			ProfitbricksServiceFault {
+		Image[] allImages = stub.getAllImages();
+		for (Image image : allImages) {
+			System.out.println(image.getImageId() + " | " + image.getImageName());
+		}
 	}
 	
 	public Server createServer(String dataCenterId, int cores, int ram_mb) throws ProfitbricksServiceFault, RemoteException {
