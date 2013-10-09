@@ -87,7 +87,7 @@ public class VMachine extends Entity implements MultiNetworkedEntity, ZonedEntit
 		List<VVolume> vvolumeList = new ArrayList<>();
 		for ( VLink vlink: vLinks.values()) {
 			NetworkedEntity end2 = vlink.getEnd2();
-			if(end2 instanceof VVolume && !(vvolumeList.contains(end2)) ) {
+			if( end2 instanceof VVolume && !(vvolumeList.contains(end2)) ) {
 				vvolumeList.add((VVolume) end2);
 			}
 		}
@@ -111,4 +111,5 @@ public class VMachine extends Entity implements MultiNetworkedEntity, ZonedEntit
 	public void removeVLink(VLink vLink) {
 		vLinks.remove(vLink);
 	}
+	
 }

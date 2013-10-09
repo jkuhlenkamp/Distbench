@@ -28,5 +28,10 @@ public class VStorageLink extends VLink {
 	void setEnd2( VVolume end2 ) {
 		this.end2 = end2;
 	}
+
+	@Override
+	public String toString() {
+		return "VStorageLink [end2=" + end2 + "]";
+	}
 	
 }
