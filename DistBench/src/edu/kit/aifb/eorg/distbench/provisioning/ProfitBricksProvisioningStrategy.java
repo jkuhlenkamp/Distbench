@@ -1,4 +1,4 @@
-package edu.kit.aifb.eorg.distbench.pb;
+package edu.kit.aifb.eorg.distbench.provisioning;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
@@ -27,15 +27,14 @@ import edu.kit.aifb.eorg.distbench.model.impl.Datacenter;
 import edu.kit.aifb.eorg.distbench.model.impl.VLink;
 import edu.kit.aifb.eorg.distbench.model.impl.VMachine;
 import edu.kit.aifb.eorg.distbench.model.impl.VVolume;
-import edu.kit.aifb.eorg.distbench.provisioning.P_API_Strategy;
 
-public class ProfitBricksApi implements P_API_Strategy {
+public class ProfitBricksProvisioningStrategy implements ProvisioningStrategy {
 	
 	private ProfitbricksApiServicePortBindingStub stub;
 	
 	private static final String UBUNTU_13_04_SERVER_AMD64_05_28_13_IMG = "3e90d37c-c87a-11e2-b188-0025901dfe2a";
 	
-	public ProfitBricksApi(ProfitbricksApiServicePortBindingStub stub) {
+	public ProfitBricksProvisioningStrategy(ProfitbricksApiServicePortBindingStub stub) {
 		this.stub = stub;
 	}
 	

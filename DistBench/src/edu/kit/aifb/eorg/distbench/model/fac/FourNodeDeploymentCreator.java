@@ -13,7 +13,7 @@ import edu.kit.aifb.eorg.distbench.model.impl.DeploymentEnvironment;
 import edu.kit.aifb.eorg.distbench.model.impl.NetworkHandler;
 import edu.kit.aifb.eorg.distbench.model.impl.VMachine;
 import edu.kit.aifb.eorg.distbench.model.impl.VVolume;
-import edu.kit.aifb.eorg.distbench.provisioning.P_API_Strategy;
+import edu.kit.aifb.eorg.distbench.provisioning.ProvisioningStrategy;
 
 public class FourNodeDeploymentCreator implements DeploymentEnvironmentCreator {
 

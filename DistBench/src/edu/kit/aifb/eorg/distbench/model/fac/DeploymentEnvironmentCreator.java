@@ -4,6 +4,6 @@ import edu.kit.aifb.eorg.distbench.model.impl.DeploymentEnvironment;
 
 public interface DeploymentEnvironmentCreator {
 	
-	abstract DeploymentEnvironment createDeployment();
+	public DeploymentEnvironment createDeployment();
 
 }
