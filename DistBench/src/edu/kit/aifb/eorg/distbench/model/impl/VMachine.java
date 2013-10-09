@@ -111,4 +111,12 @@ public class VMachine extends Entity implements MultiNetworkedEntity, ZonedEntit
 	public void removeVLink(VLink vLink) {
 		vLinks.remove(vLink);
 	}
+
+	@Override
+	public String toString() {
+		return "VMachine [uuid=" + getId() + ", cores=" + cores + ", ram=" + ram + ", os=" + os
+				+ ", vLinks=" + vLinks + ", zone=" + zone + ", datacenter="
+				+ datacenter + "]";
+	}
+	
 }

@@ -111,9 +111,8 @@ public class ProfitBricksProvisioningStrategy implements ProvisioningStrategy {
 		
 		Set<String> keySet = datacenterMap.keySet();
 		for (String key : keySet) {
-			String otherDatacenterName = datacenterMap.get(key);
-			if (otherDatacenterName.equals(datacenterName)) {
-				return key;
+			if (key.equals(datacenterName)) {
+				return datacenterMap.get(key);
 			}
 		}
 		throw new IllegalArgumentException("The specified datacenter name is not in the list");

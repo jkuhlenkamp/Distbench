@@ -67,7 +67,7 @@ public class FourNodeDeploymentCreator implements DeploymentEnvironmentCreator {
 					networkHandler.createVLink(dc.getVMachine(id1), dc.getVMachine(id2));
 				}
 				catch(IllegalArgumentException e) {
-					System.out.println("Reflexive VLink connection!");
+					e.printStackTrace();
 				}
 			}
 		}		

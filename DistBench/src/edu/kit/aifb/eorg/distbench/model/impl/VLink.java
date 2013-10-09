@@ -21,5 +21,10 @@ public abstract class VLink extends Entity {
 	abstract NetworkedEntity getEnd2();
 
 	abstract void setEnd2(NetworkedEntity end2);
+
+	@Override
+	public String toString() {
+		return "VLink [uuid=" + getId() + ", end1=" + end1 + "]";
+	}
 	
 }

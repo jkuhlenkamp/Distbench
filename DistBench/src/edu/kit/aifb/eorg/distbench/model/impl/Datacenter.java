@@ -100,4 +100,10 @@ public class Datacenter extends Entity {
 		return vMachineList;
 	}
 
+	@Override
+	public String toString() {
+		return "Datacenter [uuid=" + getId() + ", provider=" + provider + ", dcSwitch=" + dcSwitch
+				+ ", vMachines=" + vMachines + ", vVolumes=" + vVolumes + "]";
+	}
+
 }

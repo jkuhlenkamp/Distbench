@@ -61,5 +61,12 @@ public class VVolume extends Entity implements SingleNetworkedEntity, ZonedEntit
 	public Datacenter getDatacenter() {
 		return this.datacenter;
 	}
+
+	@Override
+	public String toString() {
+		return "VVolume [storageSize=" + storageSize + ", zone=" + zone
+				+ ", vLink=" + vLink + ", datacenter=" + datacenter
+				+ ", getId()=" + getId() + "]";
+	}
 	
 }
