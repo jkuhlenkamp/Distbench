@@ -53,7 +53,7 @@ public class VNetworkLink extends VLink {
 
 	@Override
 	public String toString() {
-		return "VNetworkLink [end2=" + end2 + "]";
+		return "VNetworkLink [uuid=" +super.getId()+ ", end2=" + end2 + "]";
 	}
 
 }

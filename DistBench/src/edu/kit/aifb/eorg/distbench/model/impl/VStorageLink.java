@@ -31,7 +31,7 @@ public class VStorageLink extends VLink {
 
 	@Override
 	public String toString() {
-		return "VStorageLink [end2=" + end2 + "]";
+		return "VStorageLink [uuid=" +super.getId()+ ", end2=" + end2 + "]";
 	}
 	
 }
