@@ -114,9 +114,7 @@ public class VMachine extends Entity implements MultiNetworkedEntity, ZonedEntit
 
 	@Override
 	public String toString() {
-		return "VMachine [uuid=" + getId() + ", cores=" + cores + ", ram=" + ram + ", os=" + os
-				+ ", vLinks=" + vLinks + ", zone=" + zone + ", datacenter="
-				+ datacenter + "]";
+		return "VMachine [uuid=" + getId() + "]";
 	}
 	
 }

@@ -64,13 +64,7 @@ public class VVolume extends Entity implements SingleNetworkedEntity, ZonedEntit
 
 	@Override
 	public String toString() {
-		return "VVolume [storageSize=" + storageSize + ", zone=" + zone
-<<<<<<< HEAD
-				+ ", vLink=" + vLink + ", datacenter=" + datacenter
-				+ ", getId()=" + getId() + "]";
-=======
-				+ ", vLink=" + vLink + ", datacenter=" + datacenter + "]";
->>>>>>> branch 'master' of https://github.com/jkuhlenkamp/Distbench.git
+		return "VVolume [getId()=" + getId() + "]";
 	}
-	
+
 }
