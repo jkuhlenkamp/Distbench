@@ -22,7 +22,8 @@ import edu.kit.aifb.eorg.distbench.model.impl.Datacenter;
 import edu.kit.aifb.eorg.distbench.model.impl.DeploymentEnvironment;
 import edu.kit.aifb.eorg.distbench.model.impl.VLink;
 import edu.kit.aifb.eorg.distbench.model.impl.VMachine;
-import edu.kit.aifb.eorg.distbench.pb.ProfitBricksApi;
+import edu.kit.aifb.eorg.distbench.model.impl.VVolume;
+import edu.kit.aifb.eorg.distbench.provisioning.ProfitBricksProvisioningStrategy;
 import edu.kit.aifb.eorg.distbench.provisioning.ProvisioningStrategy;
 
 public class Application {
@@ -48,7 +49,7 @@ public class Application {
 			List<Datacenter> datacenters = deploymentEnvironment
 					.getAllDatacenters();
 			for (Datacenter datacenter : datacenters) {
-				ProvisioningStrategy strategy = new ProfitBricksApi(stub);
+				ProvisioningStrategy strategy = new ProfitBricksProvisioningStrategy(stub);
 				strategy.createDatacenter(datacenter);
 				List<VMachine> vMachines = datacenter.getAllVMachines();
 				instanciateVMachines(strategy, vMachines);
@@ -91,7 +92,11 @@ public class Application {
 	private static void instanciateVVolumes(ProvisioningStrategy strategy,
 			List<VMachine> vMachines) {
 		for (VMachine vMachine : vMachines) {
-			vMachine.g
+			List<VVolume> vVolumes = vMachine.getAllVVolumes();
+			for (VVolume vVolume : vVolumes) {
+				strategy.createVVolume(vVolume);
+				strategy.connectVVolumeToVMachine(vVolume, vMachine);
+			}
 		}
 	}
 

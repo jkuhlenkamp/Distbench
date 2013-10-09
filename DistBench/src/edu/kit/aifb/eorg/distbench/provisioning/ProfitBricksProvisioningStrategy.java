@@ -157,8 +157,13 @@ public class ProfitBricksProvisioningStrategy implements ProvisioningStrategy {
 
 	@Override
 	public VLink createVLink(VLink vl) {
-		vl.
+		// TODO
 		return null;
+	}
+
+	@Override
+	public void connectVVolumeToVMachine(VVolume vVolume, VMachine vMachine) {
+		// TODO
 	}
 	
 }

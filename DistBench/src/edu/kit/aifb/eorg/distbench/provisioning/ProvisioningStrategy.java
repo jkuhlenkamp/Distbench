@@ -11,5 +11,6 @@ public interface ProvisioningStrategy {
 	public VMachine createVMachine(VMachine vm);
 	public VVolume createVVolume(VVolume vv);
 	public VLink createVLink(VLink vl);
+	public void connectVVolumeToVMachine(VVolume vVolume, VMachine vMachine);
 	
 }
