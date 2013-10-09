@@ -56,7 +56,6 @@ public class Application {
 				instanciateVVolumes(strategy, vMachines);
 //				instanciateVLinksForVMachines(strategy, vMachines);
 			}
-			System.out.println(datacenters.get(0));
 			// ProfitBricksApi profitBricksApi = new ProfitBricksApi(stub);
 			// DataCenter datacenter =
 			// profitBricksApi.createDatacenter(DISTBENCH_DATACENTER);
