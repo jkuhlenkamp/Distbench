@@ -41,40 +41,17 @@ public class Application {
 					.createDeployment();
 			List<Datacenter> datacenters = deploymentEnvironment
 					.getAllDatacenters();
+			ProvisioningStrategy profitBricksStrategy = new ProfitBricksProvisioningStrategy(
+					stub);
 			for (Datacenter datacenter : datacenters) {
-				ProvisioningStrategy strategy = new ProfitBricksProvisioningStrategy(stub);
-				strategy.createDatacenter(datacenter);
-				List<VMachine> vMachines = datacenter.getAllVMachines();
-				instanciateVMachines(strategy, vMachines);
-				instanciateVVolumes(strategy, vMachines);
-//				instanciateVLinksForVMachines(strategy, vMachines);
+				provisionDatacenter(profitBricksStrategy, datacenter);
+				provisionVMachines(profitBricksStrategy, datacenter.getAllVMachines());
+				provisionVVolumes(profitBricksStrategy, datacenter.getAllVMachines());
+//				provisionVLinksForVMachines(profitBricksStrategy, datacenter.getAllVMachines());
 			}
 			for (Datacenter datacenter : datacenters) {
 				System.out.println(datacenter.toString());
 			}
-			// ProfitBricksApi profitBricksApi = new ProfitBricksApi(stub);
-			// DataCenter datacenter =
-			// profitBricksApi.createDatacenter(DISTBENCH_DATACENTER);
-			// System.out.println("Datacenter " + datacenter.getDataCenterId());
-			// Server serverJoern =
-			// profitBricksApi.createServer(datacenter.getDataCenterId(), 1,
-			// 512);
-			// System.out.println("Server " + serverJoern.getServerId());
-			// Server serverBugra =
-			// profitBricksApi.createServer(datacenter.getDataCenterId(), 1,
-			// 512);
-			// System.out.println("Server " + serverBugra.getServerId());
-			// Storage storage =
-			// profitBricksApi.createStorage(datacenter.getDataCenterId(),
-			// "MyStorage", 30);
-			// System.out.println("Storage " + storage.getStorageId());
-			// VersionResponse versionResponse =
-			// profitBricksApi.connectStorageToServer(storage.getStorageId(),
-			// serverJoern.getServerId());
-			// System.out.println("Version Response" +
-			// versionResponse.getRequestId());
-			// profitBricksApi.createNic(serverJoern.getServerId(), 1, true);
-			// profitBricksApi.createNic(serverBugra.getServerId(), 1, true);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (RemoteException e) {
@@ -83,7 +60,14 @@ public class Application {
 
 	}
 
-	private static void instanciateVVolumes(ProvisioningStrategy strategy,
+	private static List<VMachine> provisionDatacenter(
+			ProvisioningStrategy strategy, Datacenter datacenter) {
+		strategy.createDatacenter(datacenter);
+		List<VMachine> vMachines = datacenter.getAllVMachines();
+		return vMachines;
+	}
+
+	private static void provisionVVolumes(ProvisioningStrategy strategy,
 			List<VMachine> vMachines) {
 		for (VMachine vMachine : vMachines) {
 			List<VVolume> vVolumes = vMachine.getAllVVolumes();
@@ -94,20 +78,21 @@ public class Application {
 		}
 	}
 
-	private static void instanciateVLinksForVMachines(ProvisioningStrategy strategy, List<VMachine> vMachines) {
+	private static void provisionVLinksForVMachines(
+			ProvisioningStrategy strategy, List<VMachine> vMachines) {
 		for (VMachine vMachine : vMachines) {
-			List<VLink> allVLinks = vMachine.getAllVLinks();
+			List<VLink> allVMachineVLinks = vMachine.getAllVLinks();
 			List<VLink> visitedVLinks = new ArrayList<>();
-			for (VLink vLink : allVLinks) {
+			for (VLink vLink : allVMachineVLinks) {
 				if (!visitedVLinks.contains(vLink)) {
-					strategy.createVLink(vLink);
+					strategy.createVLinks(vLink);
 					visitedVLinks.add(vLink);
 				}
 			}
 		}
 	}
 
-	private static void instanciateVMachines(ProvisioningStrategy strategy,
+	private static void provisionVMachines(ProvisioningStrategy strategy,
 			List<VMachine> vMachines) {
 		for (VMachine vMachine : vMachines) {
 			strategy.createVMachine(vMachine);

@@ -17,7 +17,7 @@ public class NetworkHandler {
 	}
 	
 	public VLink createVLink(VMachine end1, VMachine end2) {
-		if( !end1.getId().equals(end2.getId()) ) {
+		if( !end1.getName().equals(end2.getName()) ) {
 			VLink vLink = new VNetworkLink(end1, end2);
 			addVlinkToEnds(end1, end2, vLink);
 			return vLink;

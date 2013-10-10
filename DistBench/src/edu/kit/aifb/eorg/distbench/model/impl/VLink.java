@@ -4,27 +4,27 @@ import edu.kit.aifb.eorg.distbench.model.NetworkedEntity;
 
 public abstract class VLink extends Entity {
 
-	private VMachine end1;
+	private VMachine sourceEnd;
 	
-	public VLink(VMachine end1) {
+	public VLink(VMachine sourceEnd) {
 		super();
-		setEnd1(end1);
+		setSourceEnd(sourceEnd);
 	}
 	
-	public VMachine getEnd1() {
-		return end1;
+	public VMachine getSourceEnd() {
+		return sourceEnd;
 	}
-	public void setEnd1(VMachine end1) {
-		this.end1 = end1;
+	public void setSourceEnd(VMachine sourceEnd) {
+		this.sourceEnd = sourceEnd;
 	}
 	
-	abstract NetworkedEntity getEnd2();
+	abstract NetworkedEntity getTargetEnd();
 
-	abstract void setEnd2(NetworkedEntity end2);
+	abstract void setEnd2(NetworkedEntity targetEnd);
 
 	@Override
 	public String toString() {
-		return "VLink [uuid=" + getId() + ", end1=" + end1 + "]";
+		return "VLink [uuid=" + getName() + ", end1=" + sourceEnd + "]";
 	}
 	
 }

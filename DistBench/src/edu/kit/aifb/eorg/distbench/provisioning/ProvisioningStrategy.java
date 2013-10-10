@@ -10,7 +10,7 @@ public interface ProvisioningStrategy {
 	public Datacenter createDatacenter(Datacenter dc);
 	public VMachine createVMachine(VMachine vm);
 	public VVolume createVVolume(VVolume vv);
-	public VLink createVLink(VLink vl);
+	public VLink createVLinks(VLink vl);
 	public void connectVVolumeToVMachine(VVolume vVolume, VMachine vMachine);
 	
 }

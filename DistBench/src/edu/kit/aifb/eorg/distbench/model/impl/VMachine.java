@@ -86,7 +86,7 @@ public class VMachine extends Entity implements MultiNetworkedEntity, ZonedEntit
 	public List<VVolume> getAllVVolumes() {
 		List<VVolume> vvolumeList = new ArrayList<>();
 		for ( VLink vlink: vLinks.values()) {
-			NetworkedEntity end2 = vlink.getEnd2();
+			NetworkedEntity end2 = vlink.getTargetEnd();
 			if(end2 instanceof VVolume && !(vvolumeList.contains(end2)) ) {
 				vvolumeList.add((VVolume) end2);
 			}
@@ -96,13 +96,13 @@ public class VMachine extends Entity implements MultiNetworkedEntity, ZonedEntit
 	
 	@Override
 	public void addVLink(VLink vLink) {
-		if( !vLinks.containsKey(vLink.getId()) ) {
-			vLinks.put(vLink.getId(), vLink);
+		if( !vLinks.containsKey(vLink.getName()) ) {
+			vLinks.put(vLink.getName(), vLink);
 		}
 		else {
-			if( vLinks.get(vLink.getId()).equals(vLink) ) {
+			if( vLinks.get(vLink.getName()).equals(vLink) ) {
 				throw new IllegalArgumentException("Another VLink is allready" +
-						"registered on this VMachine under the same id: " +vLink.getId());
+						"registered on this VMachine under the same id: " +vLink.getName());
 			}
 		}
 	}
@@ -114,7 +114,7 @@ public class VMachine extends Entity implements MultiNetworkedEntity, ZonedEntit
 
 	@Override
 	public String toString() {
-		return "VMachine [uuid=" + getId() + "]";
+		return "VMachine [uuid=" + getName() + "]";
 	}
 	
 }

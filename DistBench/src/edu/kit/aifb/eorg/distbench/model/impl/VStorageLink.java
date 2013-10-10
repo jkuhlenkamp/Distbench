@@ -12,7 +12,7 @@ public class VStorageLink extends VLink {
 	}
 	
 	@Override
-	NetworkedEntity getEnd2() {
+	NetworkedEntity getTargetEnd() {
 		return end2;
 	}
 	@Override
@@ -31,7 +31,7 @@ public class VStorageLink extends VLink {
 
 	@Override
 	public String toString() {
-		return "VStorageLink [uuid=" +super.getId()+ ", end2=" + end2 + "]";
+		return "VStorageLink [uuid=" +super.getName()+ ", end2=" + end2 + "]";
 	}
 	
 }

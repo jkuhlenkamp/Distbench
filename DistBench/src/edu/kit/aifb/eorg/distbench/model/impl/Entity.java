@@ -4,14 +4,23 @@ import java.util.UUID;
 
 public abstract class Entity {
 
-	private final UUID id;
+	private final UUID name;
+	private String providersidedEntityId;
 	
+	public String getProvidersidedEntityId() {
+		return providersidedEntityId;
+	}
+
+	public void setProvidersidedEntityId(String providersidedEntityId) {
+		this.providersidedEntityId = providersidedEntityId;
+	}
+
 	public Entity() {
-		this.id = UUID.randomUUID();
+		this.name = UUID.randomUUID();
 	}
 	
-	public UUID getId() {
-		return id;
+	public UUID getName() {
+		return name;
 	}
 
 }

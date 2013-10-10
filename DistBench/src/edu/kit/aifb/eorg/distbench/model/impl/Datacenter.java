@@ -46,14 +46,14 @@ public class Datacenter extends Entity {
 	}
 
 	public void addVMachine(VMachine vm) {
-		if(vMachines.containsKey(vm.getId())) {
-			if( !vm.equals(vMachines.get(vm.getId())) ) {
+		if(vMachines.containsKey(vm.getName())) {
+			if( !vm.equals(vMachines.get(vm.getName())) ) {
 				throw new IllegalArgumentException("This datacenter" +
-						"contains another VMachine object with id: " +vm.getId());
+						"contains another VMachine object with id: " +vm.getName());
 			}
 		}
 		else {
-			vMachines.put(vm.getId(), vm);
+			vMachines.put(vm.getName(), vm);
 		}
 	}
 
@@ -78,14 +78,14 @@ public class Datacenter extends Entity {
 	}
 
 	public void addVVolume(VVolume vv) {
-		if(vVolumes.containsKey(vv.getId())) {
-			if( !vv.equals(vVolumes.get(vv.getId())) ) {
+		if(vVolumes.containsKey(vv.getName())) {
+			if( !vv.equals(vVolumes.get(vv.getName())) ) {
 				throw new IllegalArgumentException("This datacenter" +
-						"contains another VVolume object with id: " +vv.getId());
+						"contains another VVolume object with id: " +vv.getName());
 			}
 		}
 		else {
-			vVolumes.put(vv.getId(), vv);
+			vVolumes.put(vv.getName(), vv);
 		}
 	}
 
@@ -102,7 +102,7 @@ public class Datacenter extends Entity {
 
 	@Override
 	public String toString() {
-		return "Datacenter [uuid=" + getId() + ", provider=" + provider + ", dcSwitch=" + dcSwitch
+		return "Datacenter [uuid=" + getName() + ", provider=" + provider + ", dcSwitch=" + dcSwitch
 				+ ", vMachines=" + vMachines + ", vVolumes=" + vVolumes + "]";
 	}
 

@@ -32,7 +32,7 @@ public class VVolume extends Entity implements SingleNetworkedEntity, ZonedEntit
 	
 	@Override
 	public VLink getVLink(UUID id) {
-		if( vLink.getId().equals(id) ) {
+		if( vLink.getName().equals(id) ) {
 			return vLink;
 		}
 		else {
@@ -64,7 +64,7 @@ public class VVolume extends Entity implements SingleNetworkedEntity, ZonedEntit
 
 	@Override
 	public String toString() {
-		return "VVolume [getId()=" + getId() + "]";
+		return "VVolume [getId()=" + getName() + "]";
 	}
 
 }

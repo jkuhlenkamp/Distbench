@@ -25,14 +25,14 @@ public class DeploymentEnvironment extends Entity {
 	}
 	
 	public void addDataCenter(Datacenter dc) {
-		if(datacenters.containsKey(dc.getId())) {
-			if( !dc.equals(datacenters.get(dc.getId())) ) {
+		if(datacenters.containsKey(dc.getName())) {
+			if( !dc.equals(datacenters.get(dc.getName())) ) {
 				throw new IllegalArgumentException("This datatercenter" +
-						"contains another datacenter object with id: " +dc.getId());
+						"contains another datacenter object with id: " +dc.getName());
 			}
 		}
 		else {
-			datacenters.put(dc.getId(), dc);
+			datacenters.put(dc.getName(), dc);
 		}
 	}
 	

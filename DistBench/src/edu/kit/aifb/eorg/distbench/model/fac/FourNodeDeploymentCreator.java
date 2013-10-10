@@ -58,7 +58,7 @@ public class FourNodeDeploymentCreator implements DeploymentEnvironmentCreator {
 				networkHandler.createVLink(vm, vv);
 			}
 			dc.addVMachine(vm);
-			vmList.add(vm.getId());
+			vmList.add(vm.getName());
 			networkHandler.createVLink(vm, dc.getDatacenterSwitch());
 		}
 		for(UUID id1 : vmList) {

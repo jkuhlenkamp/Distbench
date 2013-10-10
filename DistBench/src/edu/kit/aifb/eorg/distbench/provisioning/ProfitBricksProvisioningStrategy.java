@@ -26,6 +26,7 @@ import com.profitbricks.api.ws.VersionResponse;
 import edu.kit.aifb.eorg.distbench.model.impl.Datacenter;
 import edu.kit.aifb.eorg.distbench.model.impl.VLink;
 import edu.kit.aifb.eorg.distbench.model.impl.VMachine;
+import edu.kit.aifb.eorg.distbench.model.impl.VNetworkLink;
 import edu.kit.aifb.eorg.distbench.model.impl.VVolume;
 
 public class ProfitBricksProvisioningStrategy implements ProvisioningStrategy {
@@ -38,41 +39,35 @@ public class ProfitBricksProvisioningStrategy implements ProvisioningStrategy {
 		this.stub = stub;
 	}
 	
-	public Nic createNic(String serverId, int lanId, boolean isInternetAccessEnabled) throws ProfitbricksServiceFault, RemoteException {
-		CreateNicRequest request = new CreateNicRequest();
+	public VersionResponse connectStorageToServer(String storageId, String serverId) throws ProfitbricksServiceFault, RemoteException {
+		ConnectStorageRequest request = new ConnectStorageRequest();
 		request.setServerId(serverId);
-		request.setLanId(lanId);
-		CreateNicResponse nicResponse = stub.createNic(request);
-		Nic nic = stub.getNic(nicResponse.getNicId());
-		nic.setInternetAccess(isInternetAccessEnabled);
-		return nic;
+		request.setStorageId(storageId);
+		return stub.connectStorageToServer(request);
 	}
 	
-	public Storage createStorage(String dataCenterId, String storageName, long size) throws ProfitbricksServiceFault, RemoteException {
-		CreateStorageRequest request = new CreateStorageRequest();
-		request.setDataCenterId(dataCenterId);
-		request.setStorageName(storageName);
-		request.setSize(size);
-		request.setMountImageId(UBUNTU_13_04_SERVER_AMD64_05_28_13_IMG);
-		request.setProfitBricksImagePassword("djstbench");
-		return stub.getStorage(stub.createStorage(request).getStorageId());
-	}
-
-	public void printAllProfitBricksImages() throws RemoteException,
-			ProfitbricksServiceFault {
-		Image[] allImages = stub.getAllImages();
-		for (Image image : allImages) {
-			System.out.println(image.getImageId() + " | " + image.getImageName());
+	@Override
+	public void connectVVolumeToVMachine(VVolume vVolume, VMachine vMachine) {
+		try {
+			connectStorageToServer(vVolume.getProvidersidedEntityId(), vMachine.getProvidersidedEntityId());
+		} catch (ProfitbricksServiceFault profitbricksServiceFault) {
+			profitbricksServiceFault.printStackTrace();
+		} catch (RemoteException remoteException) {
+			remoteException.printStackTrace();
 		}
 	}
-	
-	public Server createServer(String dataCenterId, int cores, int ram_mb) throws ProfitbricksServiceFault, RemoteException {
-		CreateServerRequest request = new CreateServerRequest();
-		request.setCores(cores);
-		request.setDataCenterId(dataCenterId);
-		request.setOsType(OsType.LINUX);
-		request.setRam(ram_mb);
-		return stub.getServer(stub.createServer(request).getServerId());
+
+	@Override
+	public Datacenter createDatacenter(Datacenter dc) {
+		try {
+			DataCenter datacenter = createDatacenter(dc.getName().toString());
+			dc.setProvidersidedEntityId(datacenter.getDataCenterId());
+		} catch (ProfitbricksServiceFault profitbricksServiceFault) {
+			profitbricksServiceFault.printStackTrace();
+		} catch (RemoteException remoteException) {
+			remoteException.printStackTrace();
+		}
+		return dc;
 	}
 	
 	public DataCenter createDatacenter(String datacenterName) throws RemoteException, ProfitbricksServiceFault {
@@ -95,14 +90,77 @@ public class ProfitBricksProvisioningStrategy implements ProvisioningStrategy {
 		}
 		return datacenterMap;
 	}
-
-	public VersionResponse connectStorageToServer(String storageId, String serverId) throws ProfitbricksServiceFault, RemoteException {
-		ConnectStorageRequest request = new ConnectStorageRequest();
+	
+	public Nic createNic(String serverId, int lanId, boolean isInternetAccessEnabled) throws ProfitbricksServiceFault, RemoteException {
+		CreateNicRequest request = new CreateNicRequest();
 		request.setServerId(serverId);
-		request.setStorageId(storageId);
-		return stub.connectStorageToServer(request);
+		request.setLanId(lanId);
+		CreateNicResponse nicResponse = stub.createNic(request);
+		Nic nic = stub.getNic(nicResponse.getNicId());
+		nic.setInternetAccess(isInternetAccessEnabled);
+		return nic;
+	}
+
+	public Server createServer(String dataCenterId, int cores, int ram_mb) throws ProfitbricksServiceFault, RemoteException {
+		CreateServerRequest request = new CreateServerRequest();
+		request.setCores(cores);
+		request.setDataCenterId(dataCenterId);
+		request.setOsType(OsType.LINUX);
+		request.setRam(ram_mb);
+		return stub.getServer(stub.createServer(request).getServerId());
 	}
 	
+	public Storage createStorage(String dataCenterId, String storageName, long size) throws ProfitbricksServiceFault, RemoteException {
+		CreateStorageRequest request = new CreateStorageRequest();
+		request.setDataCenterId(dataCenterId);
+		request.setStorageName(storageName);
+		request.setSize(size);
+		request.setMountImageId(UBUNTU_13_04_SERVER_AMD64_05_28_13_IMG);
+		request.setProfitBricksImagePassword("djstbench");
+		return stub.getStorage(stub.createStorage(request).getStorageId());
+	}
+
+	@Override
+	public VLink createVLinks(VLink vLink) {
+		VNetworkLink networkLink = (VNetworkLink) vLink;
+		try {
+			int lanId = Integer.parseInt(networkLink.getLanId());
+			Nic nic = createNic(networkLink.getSourceEnd().getProvidersidedEntityId(), lanId, true);
+			networkLink.setProvidersidedEntityId(nic.getNicId());
+		} catch (ProfitbricksServiceFault profitbricksServiceFault) {
+			profitbricksServiceFault.printStackTrace();
+		} catch (RemoteException remoteException) {
+			remoteException.printStackTrace();
+		}
+		return networkLink;
+	}
+
+	@Override
+	public VMachine createVMachine(VMachine vm) {
+		try {
+			Server server = createServer(getDatacenterIdForName(vm.getDatacenter().getName().toString()), vm.getCores(), vm.getRam() * 1024);
+			vm.setProvidersidedEntityId(server.getServerId());
+		} catch (ProfitbricksServiceFault e) {
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return vm;
+	}
+
+	@Override
+	public VVolume createVVolume(VVolume vVolume) {
+		try {
+			Storage storage = createStorage(getDatacenterIdForName(vVolume.getDatacenter().getName().toString()), vVolume.getName().toString(), vVolume.getStorageSize());
+			vVolume.setProvidersidedEntityId(storage.getStorageId());
+		} catch (ProfitbricksServiceFault profitbricksServiceFault) {
+			profitbricksServiceFault.printStackTrace();
+		} catch (RemoteException remoteException) {
+			remoteException.printStackTrace();
+		}
+		return vVolume;
+	}
+
 	public String getDatacenterIdForName(String datacenterName) {
 		Map<String, String> datacenterMap = null;
 		try {
@@ -122,51 +180,12 @@ public class ProfitBricksProvisioningStrategy implements ProvisioningStrategy {
 		throw new IllegalArgumentException("The specified datacenter name is not in the list");
 	}
 
-	@Override
-	public Datacenter createDatacenter(Datacenter dc) {
-		try {
-			createDatacenter(dc.getId().toString());
-		} catch (ProfitbricksServiceFault e) {
-			e.printStackTrace();
-		} catch (RemoteException e) {
-			e.printStackTrace();
+	public void printAllProfitBricksImages() throws RemoteException,
+			ProfitbricksServiceFault {
+		Image[] allImages = stub.getAllImages();
+		for (Image image : allImages) {
+			System.out.println(image.getImageId() + " | " + image.getImageName());
 		}
-		return dc;
-	}
-
-	@Override
-	public VMachine createVMachine(VMachine vm) {
-		try {
-			createServer(getDatacenterIdForName(vm.getDatacenter().getId().toString()), vm.getCores(), vm.getRam() * 1024);
-		} catch (ProfitbricksServiceFault e) {
-			e.printStackTrace();
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		return vm;
-	}
-
-	@Override
-	public VVolume createVVolume(VVolume vv) {
-		try {
-			createStorage(getDatacenterIdForName(vv.getDatacenter().getId().toString()), vv.getId().toString(), vv.getStorageSize());
-		} catch (ProfitbricksServiceFault e) {
-			e.printStackTrace();
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		return vv;
-	}
-
-	@Override
-	public VLink createVLink(VLink vl) {
-		// TODO
-		return null;
-	}
-
-	@Override
-	public void connectVVolumeToVMachine(VVolume vVolume, VMachine vMachine) {
-		// TODO
 	}
 	
 }

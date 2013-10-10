@@ -14,7 +14,7 @@ public class DatacenterSwitch extends Entity implements SingleNetworkedEntity {
 
 	@Override
 	public VLink getVLink(UUID id) {
-		if( id.equals(vLink.getId()) ) {
+		if( id.equals(vLink.getName()) ) {
 			return vLink;
 		}
 		else {
