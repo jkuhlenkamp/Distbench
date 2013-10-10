@@ -5,6 +5,8 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import org.apache.axis.AxisFault;
+
 import com.profitbricks.api.ws.ProfitbricksApiService;
 import com.profitbricks.api.ws.ProfitbricksApiServiceLocator;
 import com.profitbricks.api.ws.ProfitbricksApiServicePortBindingStub;
@@ -29,16 +31,8 @@ public class Application {
 
 		ProfitbricksApiService pbApiService = new ProfitbricksApiServiceLocator();
 		try {
-			ProfitbricksApiServicePortBindingStub stub = new ProfitbricksApiServicePortBindingStub(
-					new URL(HTTPS_API_PROFITBRICKS_COM_1_2), pbApiService);
-			stub.setUsername("joern.kuhlenkamp@kit.edu");
-			stub.setPassword("distbench");
-
-			DeploymentEnvironmentCreator environmentCreator = new FourNodeDeploymentCreator();
-			DeploymentEnvironment deploymentEnvironment = environmentCreator
-					.createDeployment();
-			List<Datacenter> datacenters = deploymentEnvironment
-					.getAllDatacenters();
+			ProfitbricksApiServicePortBindingStub stub = createProfitBricksServiceStub(pbApiService);
+			List<Datacenter> datacenters = createDeploymentEnvironmentWithDatacenters();
 			ProvisioningStrategy profitBricksStrategy = new ProfitBricksProvisioningStrategy(
 					stub);
 			for (Datacenter datacenter : datacenters) {
@@ -55,6 +49,25 @@ public class Application {
 			e.printStackTrace();
 		}
 
+	}
+
+	private static List<Datacenter> createDeploymentEnvironmentWithDatacenters() {
+		DeploymentEnvironmentCreator environmentCreator = new FourNodeDeploymentCreator();
+		DeploymentEnvironment deploymentEnvironment = environmentCreator
+				.createDeployment();
+		List<Datacenter> datacenters = deploymentEnvironment
+				.getAllDatacenters();
+		return datacenters;
+	}
+
+	private static ProfitbricksApiServicePortBindingStub createProfitBricksServiceStub(
+			ProfitbricksApiService pbApiService) throws AxisFault,
+			MalformedURLException {
+		ProfitbricksApiServicePortBindingStub stub = new ProfitbricksApiServicePortBindingStub(
+				new URL(HTTPS_API_PROFITBRICKS_COM_1_2), pbApiService);
+		stub.setUsername("joern.kuhlenkamp@kit.edu");
+		stub.setPassword("distbench");
+		return stub;
 	}
 
 	private static List<VMachine> provisionDatacenter(
