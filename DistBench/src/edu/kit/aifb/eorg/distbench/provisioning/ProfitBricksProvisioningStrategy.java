@@ -107,6 +107,7 @@ public class ProfitBricksProvisioningStrategy implements ProvisioningStrategy {
 		request.setDataCenterId(dataCenterId);
 		request.setOsType(OsType.LINUX);
 		request.setRam(ram_mb);
+		request.setInternetAccess(true);
 		return stub.getServer(stub.createServer(request).getServerId());
 	}
 	
@@ -140,6 +141,7 @@ public class ProfitBricksProvisioningStrategy implements ProvisioningStrategy {
 		try {
 			Server server = createServer(getDatacenterIdForName(vm.getDatacenter().getName().toString()), vm.getCores(), vm.getRam() * 1024);
 			vm.setProvidersidedEntityId(server.getServerId());
+			createNic(server.getServerId(), 1, true);
 		} catch (ProfitbricksServiceFault e) {
 			e.printStackTrace();
 		} catch (RemoteException e) {
