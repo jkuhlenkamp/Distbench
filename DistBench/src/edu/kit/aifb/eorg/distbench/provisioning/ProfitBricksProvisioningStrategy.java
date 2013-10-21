@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import com.profitbricks.api.ws.ConnectStorageRequest;
 import com.profitbricks.api.ws.CreateDcResponse;
@@ -40,25 +41,41 @@ public class ProfitBricksProvisioningStrategy implements ProvisioningStrategy {
 	}
 	
 	public VersionResponse connectStorageToServer(String storageId, String serverId) throws ProfitbricksServiceFault, RemoteException {
-		ConnectStorageRequest request = new ConnectStorageRequest();
-		request.setServerId(serverId);
-		request.setStorageId(storageId);
-		return stub.connectStorageToServer(request);
+		System.out.println("Connecting server:" +serverId+ " and storage:" +storageId);
+		if( storageId == null || serverId == null ) {
+			throw new IllegalArgumentException("You must provide a storageId and " +
+				"a servId to connect: storageId=" +storageId+ ", serverId: " +serverId);
+		}
+		else {
+			ConnectStorageRequest request = new ConnectStorageRequest();
+			request.setServerId(serverId);
+			request.setStorageId(storageId);
+			return stub.connectStorageToServer(request);
+		}
 	}
 	
 	@Override
 	public void connectVVolumeToVMachine(VVolume vVolume, VMachine vMachine) {
-		try {
-			connectStorageToServer(vVolume.getProvidersidedEntityId(), vMachine.getProvidersidedEntityId());
-		} catch (ProfitbricksServiceFault profitbricksServiceFault) {
-			profitbricksServiceFault.printStackTrace();
-		} catch (RemoteException remoteException) {
-			remoteException.printStackTrace();
+		if( vVolume == null || vMachine == null ) {
+			throw new IllegalArgumentException("You must provide a VMachine and " +
+				"VVolume to connect: VVolume=" +vVolume+ ", VMachine: " +vMachine);
+		}
+		else {
+			try {
+				connectStorageToServer(vVolume.getProvidersidedEntityId(), vMachine.getProvidersidedEntityId());
+			} catch (ProfitbricksServiceFault profitbricksServiceFault) {
+				profitbricksServiceFault.printStackTrace();
+			} catch (RemoteException remoteException) {
+				remoteException.printStackTrace();
+			}
 		}
 	}
 
 	@Override
 	public Datacenter createDatacenter(Datacenter dc) {
+		if( dc == null ) {
+			throw new IllegalArgumentException("The provided Datacenter object must not be null!");
+		}
 		try {
 			DataCenter datacenter = createDatacenter(dc.getName().toString());
 			dc.setProvidersidedEntityId(datacenter.getDataCenterId());
@@ -71,11 +88,18 @@ public class ProfitBricksProvisioningStrategy implements ProvisioningStrategy {
 	}
 	
 	public DataCenter createDatacenter(String datacenterName) throws RemoteException, ProfitbricksServiceFault {
+		if(datacenterName == null || datacenterName.equalsIgnoreCase("")) {
+			throw new IllegalArgumentException("You must provide a String representation for the name " +
+					"of the datacenter to create!");
+		}
 		Map<String, String> datacenterMap = createDatacenterMap();
 		if (!datacenterMap.containsKey(datacenterName)) {
+			System.out.println("Sending create datacenter request: ");
 			CreateDcResponse dcResponse = stub.createDataCenter(datacenterName, Region.EUROPE);
-			return stub.getDataCenter(dcResponse.getDataCenterId());
+			DataCenter remoteDataCenter = stub.getDataCenter(dcResponse.getDataCenterId());
+			return remoteDataCenter;
 		} else {
+			System.out.println("Cannot create datacenter. Another datacenter with the same name has been provisioned.");
 			return stub.getDataCenter(datacenterMap.get(datacenterName));
 		}
 	}
@@ -83,11 +107,15 @@ public class ProfitBricksProvisioningStrategy implements ProvisioningStrategy {
 	private Map<String, String> createDatacenterMap() throws RemoteException, ProfitbricksServiceFault {
 		Map<String, String> datacenterMap = new HashMap<>();
 		DataCenterIdentifier[] dataCenters = stub.getAllDataCenters();
-		for (DataCenterIdentifier dataCenterIdentifier : dataCenters) {
-			String dataCenterId = dataCenterIdentifier.getDataCenterId();
-			String dataCenterName = dataCenterIdentifier.getDataCenterName();
-			datacenterMap.put(dataCenterName, dataCenterId);
+		
+		if( dataCenters != null ) {
+			for (DataCenterIdentifier dataCenterIdentifier : dataCenters) {
+				String dataCenterId = dataCenterIdentifier.getDataCenterId();
+				String dataCenterName = dataCenterIdentifier.getDataCenterName();
+				datacenterMap.put(dataCenterName, dataCenterId);
+			}
 		}
+		
 		return datacenterMap;
 	}
 	
@@ -95,20 +123,27 @@ public class ProfitBricksProvisioningStrategy implements ProvisioningStrategy {
 		CreateNicRequest request = new CreateNicRequest();
 		request.setServerId(serverId);
 		request.setLanId(lanId);
+		System.out.println("Sending create nic request: serverId=" +request.getServerId()+ ", lanId=" +request.getLanId());
 		CreateNicResponse nicResponse = stub.createNic(request);
 		Nic nic = stub.getNic(nicResponse.getNicId());
 		nic.setInternetAccess(isInternetAccessEnabled);
 		return nic;
 	}
 
-	public Server createServer(String dataCenterId, int cores, int ram_mb) throws ProfitbricksServiceFault, RemoteException {
+	public Server createServer(String dataCenterId, int cores, int ram_mb, String bootFromStorageId) throws ProfitbricksServiceFault, RemoteException {
 		CreateServerRequest request = new CreateServerRequest();
-		request.setCores(cores);
 		request.setDataCenterId(dataCenterId);
-		request.setOsType(OsType.LINUX);
+		request.setCores(cores);
 		request.setRam(ram_mb);
+		request.setOsType(OsType.LINUX);
+		request.setBootFromStorageId(bootFromStorageId);
 		request.setInternetAccess(true);
-		return stub.getServer(stub.createServer(request).getServerId());
+		
+		System.out.println("Sending create server request: datacenterId=" +request.getDataCenterId()+ 
+				", cores=" +request.getCores()+ ", ram=" +request.getRam()+ ", os=" +request.getOsType()+
+				", hasInternetAccess=");
+		Server remoteServer = stub.getServer(stub.createServer(request).getServerId());
+		return remoteServer;
 	}
 	
 	public Storage createStorage(String dataCenterId, String storageName, long size) throws ProfitbricksServiceFault, RemoteException {
@@ -118,7 +153,10 @@ public class ProfitBricksProvisioningStrategy implements ProvisioningStrategy {
 		request.setSize(size);
 		request.setMountImageId(UBUNTU_13_04_SERVER_AMD64_05_28_13_IMG);
 		request.setProfitBricksImagePassword("djstbench");
-		return stub.getStorage(stub.createStorage(request).getStorageId());
+		
+		System.out.println("Sending create storage request: " +request.toString());
+		Storage remoteStorage = stub.getStorage(stub.createStorage(request).getStorageId());
+		return remoteStorage;
 	}
 
 	@Override
@@ -139,9 +177,12 @@ public class ProfitBricksProvisioningStrategy implements ProvisioningStrategy {
 	@Override
 	public VMachine createVMachine(VMachine vm) {
 		try {
-			Server server = createServer(getDatacenterIdForName(vm.getDatacenter().getName().toString()), vm.getCores(), vm.getRam() * 1024);
+			VVolume mountVolume = vm.getDatacenter().getVVolume(vm.getMountId());
+			//Server server = createServer(getDatacenterIdForName(vm.getDatacenter().getName().toString()), vm.getCores(), vm.getRam() * 1024, mountVolume.getProvidersidedEntityId());
+			Server server = createServer(vm.getDatacenter().getProvidersidedEntityId(), vm.getCores(), vm.getRam() * 1024, mountVolume.getProvidersidedEntityId());
 			vm.setProvidersidedEntityId(server.getServerId());
 			createNic(server.getServerId(), 1, true);
+			connectVVolumeToVMachine(mountVolume, vm);
 		} catch (ProfitbricksServiceFault e) {
 			e.printStackTrace();
 		} catch (RemoteException e) {
@@ -153,7 +194,8 @@ public class ProfitBricksProvisioningStrategy implements ProvisioningStrategy {
 	@Override
 	public VVolume createVVolume(VVolume vVolume) {
 		try {
-			Storage storage = createStorage(getDatacenterIdForName(vVolume.getDatacenter().getName().toString()), vVolume.getName().toString(), vVolume.getStorageSize());
+			//Storage storage = createStorage(getDatacenterIdForName(vVolume.getDatacenter().getName().toString()), vVolume.getName().toString(), vVolume.getStorageSize());
+			Storage storage = createStorage(vVolume.getDatacenter().getProvidersidedEntityId(), vVolume.getName().toString(), vVolume.getStorageSize());
 			vVolume.setProvidersidedEntityId(storage.getStorageId());
 		} catch (ProfitbricksServiceFault profitbricksServiceFault) {
 			profitbricksServiceFault.printStackTrace();
@@ -163,7 +205,12 @@ public class ProfitBricksProvisioningStrategy implements ProvisioningStrategy {
 		return vVolume;
 	}
 
+	/*
 	public String getDatacenterIdForName(String datacenterName) {
+		if(datacenterName == null || datacenterName.equalsIgnoreCase("")) {
+			throw new IllegalArgumentException("You must provide a String representation for the name " +
+					"of the datacenter to retrieve an id for!");
+		}
 		Map<String, String> datacenterMap = null;
 		try {
 			datacenterMap = createDatacenterMap();
@@ -181,7 +228,7 @@ public class ProfitBricksProvisioningStrategy implements ProvisioningStrategy {
 		}
 		throw new IllegalArgumentException("The specified datacenter name is not in the list");
 	}
-
+	*/
 	public void printAllProfitBricksImages() throws RemoteException,
 			ProfitbricksServiceFault {
 		Image[] allImages = stub.getAllImages();

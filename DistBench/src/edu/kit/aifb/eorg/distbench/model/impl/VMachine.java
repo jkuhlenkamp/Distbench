@@ -20,7 +20,16 @@ public class VMachine extends Entity implements MultiNetworkedEntity, ZonedEntit
 	private Map<UUID, VLink> vLinks;
 	private AvailabilityZone zone;
 	private final Datacenter datacenter;
+	private String mountId;
 	
+	public String getMountId() {
+		return mountId;
+	}
+
+	public void setMountId(String mountId) {
+		this.mountId = mountId;
+	}
+
 	public Datacenter getDatacenter() {
 		return datacenter;
 	}

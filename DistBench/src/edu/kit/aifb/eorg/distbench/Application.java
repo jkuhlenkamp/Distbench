@@ -37,8 +37,8 @@ public class Application {
 					stub);
 			for (Datacenter datacenter : datacenters) {
 				provisionDatacenter(profitBricksStrategy, datacenter);
-				provisionVMachines(profitBricksStrategy, datacenter.getAllVMachines());
 				provisionVVolumes(profitBricksStrategy, datacenter.getAllVMachines());
+				provisionVMachines(profitBricksStrategy, datacenter.getAllVMachines());
 			}
 			for (Datacenter datacenter : datacenters) {
 				System.out.println(datacenter.toString());
@@ -83,7 +83,6 @@ public class Application {
 			List<VVolume> vVolumes = vMachine.getAllVVolumes();
 			for (VVolume vVolume : vVolumes) {
 				strategy.createVVolume(vVolume);
-				strategy.connectVVolumeToVMachine(vVolume, vMachine);
 			}
 		}
 	}

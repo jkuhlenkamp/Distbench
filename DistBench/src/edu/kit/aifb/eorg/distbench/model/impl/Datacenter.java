@@ -73,6 +73,11 @@ public class Datacenter extends Entity {
 		}
 	}
 	
+	public VVolume getVVolume(String id) {
+		UUID uuid = UUID.fromString(id);
+		return getVVolume(uuid);
+	}
+	
 	public int getVVolumeNumb() {
 		return vVolumes.size();
 	}

@@ -49,18 +49,53 @@ public class FourNodeDeploymentCreator implements DeploymentEnvironmentCreator {
 		// Create servers with volumes and network links
 		for(int i = 0; i < numbServer; i++) {
 			VMachine vm = new VMachine(dc);
-			vm.setCores(1);
-			vm.setRam(1);
+			vm.setCores(2);
+			vm.setRam(8);
 			vm.setZone(zone);
 			for(int j = 0; j < numbVolumesPerServer; j++) {
 				VVolume vv = new VVolume(dc);
-				vv.setStorageSize(10);
+				vv.setStorageSize(80);
+				// Set first volume as mountId
+				if( j == 0 ) {
+					vm.setMountId(vv.getName().toString());
+				}
 				networkHandler.createVLink(vm, vv);
 			}
 			dc.addVMachine(vm);
 			vmList.add(vm.getName());
 			networkHandler.createVLink(vm, dc.getDatacenterSwitch());
 		}
+		// Create array to store created links
+		boolean[][] hasLinkMatrix = new boolean[vmList.size()][vmList.size()];
+		for( int i = 0; i < vmList.size(); i++ ) {
+			for( int j = 0; j < vmList.size(); j++ ) {
+				if( i == j ) {
+					hasLinkMatrix[i][j] = true;
+				}
+				else {
+					hasLinkMatrix[i][j] = false;
+				}
+			}
+		}
+		// Connect all VMachines with each other
+		for( int i = 0; i < vmList.size(); i++ ) {
+			for( int j = 0; j < vmList.size(); j++ ) {
+				if(hasLinkMatrix[i][j] == false 
+						&& hasLinkMatrix[j][i] == false) {
+					UUID id1 = vmList.get(i);
+					UUID id2 = vmList.get(j);
+					try{
+						networkHandler.createVLink(dc.getVMachine(id1), dc.getVMachine(id2));
+					}
+					catch(IllegalArgumentException e) {
+						e.printStackTrace();
+					}
+					hasLinkMatrix[i][j] = true;
+					hasLinkMatrix[j][i] = true;
+				}
+			}
+		}
+		/*
 		for(UUID id1 : vmList) {
 			for(UUID id2 : vmList) {
 				try{
@@ -70,7 +105,8 @@ public class FourNodeDeploymentCreator implements DeploymentEnvironmentCreator {
 					e.printStackTrace();
 				}
 			}
-		}		
+		}
+		*/	
 		return result;
 	}
 

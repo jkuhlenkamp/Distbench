@@ -20,6 +20,7 @@ public class VVolume extends Entity implements SingleNetworkedEntity, ZonedEntit
 	public VVolume(Datacenter datacenter) {
 		super();
 		this.datacenter = datacenter;
+		datacenter.addVVolume(this);
 		storageSize = 0;
 	}
 	
